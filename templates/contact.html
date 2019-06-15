@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title%}Pizza{% endblock %}
+{% block body %}
+
+<div class="row">
+  <div class="col-sm-12 col-lg-6">
+    <form method="post">
+      {% csrf_token%}
+      {{ form }}
+      <button type="submit" class="btn btn-dark my-3" name="button">Submit</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

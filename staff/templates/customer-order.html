@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block body %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Date</th>
+      <th scope="col">Order ID</th>
+      <th scope="col">Customer Name</th>
+      <th scope="col">Shipping Address</th>
+      <th scope="col">Items</th>
+      <th scope="col">Shipping Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders.all %}
+    <tr>
+      <th scope="col">{{ forloop.counter }}</th>
+      <td>{{ order.timestamp }}</td>
+      <td><a href='{% url "staff:customer_order" cart_id=order.cart.id %}'>{{ order.id }}</a></td>
+      <td>{{ order.billing_profile.user }}</td>
+      <td>{{ order.shipping_address }}</td>
+      <td>
+        {% for item in order.cart.cartitem_set.all %}
+        <ul>
+          <li>{{ item.products.title }}</li>
+        </ul>
+        {% endfor %}
+      <td>{{ order.status|capfirst }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

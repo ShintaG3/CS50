@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+
+<h1>Cart</h1>
+{% if cart.cartitem_set.exists %}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Procuct Price</th>
+      <th scope="col">Procuct Quantity</th>
+      <th scope="col">Line Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in cart.cartitem_set.all %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td><a href="{{ item.products.get_absolute_url }}">{{ item.products.title }}</a>
+        {% if item.variations.all %}
+          {% regroup item.variations.all by category as category_list %}
+            {% for category in category_list %}
+              <ul>
+                <li>{{ category.grouper|capfirst }} : {% for item in category.list %}{{ item.title|capfirst }} &nbsp {% endfor %}</li>
+              </ul>
+            {% endfor %}
+        {% endif %}
+
+        {% if not view_only %}
+          {% include "product/snippets/update-cart.html" with cart_item=item cart=cart %}
+        {% endif %}
+
+       </td>
+      <td>{{ item.unit_price }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>{{ item.line_total }}</td>
+
+    </tr>
+    {% endfor %}
+    <tr>
+      <td colspan="4"></td>
+      <td><b>Subtotal</b>{{ cart.subtotal }}</td>
+    </tr>
+    <tr>
+      <td colspan="4"></td>
+      <td><b>Total</b>{{ cart.total }}</td>
+    </tr>
+    <tr>
+      <td colspan="4"></td>
+      {% if not view_only %}
+        <td><a href='{% url "cart:checkout" %}' class="btn btn-success">Checkout</a></td>
+      {% endif %}
+    </tr>
+  </tbody>
+</table>
+
+{% if view_only %}
+  <form class="form" action='{% url "staff:update" cart_id=cart.id %}' method="post">
+    {% csrf_token %}
+    <select class="form-control col-2" name="status">
+      {% for option in status %}
+      <option value="{{option}}">{{ option }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-success" name="button">Update</button>
+  </form>
+
+{% endif %}
+
+{% else %}
+<p class='lead'>Cart is empty</p>
+{% endif %}
+
+{% endblock %}

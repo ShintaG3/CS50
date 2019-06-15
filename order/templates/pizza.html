@@ -1,0 +1,21 @@
+{% extends "base.html "%}
+{% block title %}Pizza{% endblock %}
+{% block body %}
+
+<h2>{{ pizza }}</h2>
+<ul>
+  {% for topping in toppings %}
+  <li>{{topping}}</li>
+  {% endfor %}
+</ul>
+
+<form class="" action="{% url 'add' pizza.id %}" method="post">
+  {% csrf_token %}
+  {% for topping in toppings %}
+    <input type="checkbox" name="topping" value="{{ topping }}">
+  {% endfor %}
+  <input type="submit" value="add to Cart">
+</form>
+<a href="{% url 'index' %}">back to menu</a>
+
+{% endblock %}
